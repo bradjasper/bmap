@@ -22,7 +22,7 @@ Map.prototype.getKey = function (searchValue) {
 }
 
 // Takes a BOB formatted op_return transaction
-bmap.TransformTx = async (tx) => {
+bmap.TransformTx = (tx) => {
   if (!tx || !tx.hasOwnProperty('in') || !tx.hasOwnProperty('out')) {
     throw new Error('Cant process tx', tx)
   }
@@ -653,18 +653,9 @@ function cellValue(pushdata, schemaEncoding) {
 }
 
 // Different methods for node vs browser
-async function getEnvSafeMetanetID(a, tx) {
-  // Calculate the node ID
-  if (isBrowser()) {
-    // browser
-    let buf = new ArrayBuffer(a + tx)
-    let digest = await crypto.subtle.digest('SHA-256', buf)
-    return buf2hex(digest)
-  } else {
-    // node
-    let buf = Buffer.from(a + tx)
-    return crypto.createHash('sha256').update(buf).digest('hex')
-  }
+function getEnvSafeMetanetID(a, tx) {
+  let buf = Buffer.from(a + tx)
+  return crypto.createHash('sha256').update(buf).digest('hex')
 }
 
 function isBrowser() {
